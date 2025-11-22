@@ -236,6 +236,45 @@ REQUIRED_FIELDS = sorted({key for keys in STEP_REQUIRED.values() for key in keys
 # ==========================
 # FUNCIONES AUXILIARES
 # ==========================
+def initialize_default_state():
+    """Precarga valores por defecto para que el validador no los considere vacíos."""
+
+    default_values = {
+        "institucion": UNIDADES_JURISDICCION[0],
+        "fecha_consulta": dt.date.today(),
+        "tipo_documento": DOCUMENTO_OPTIONS[0],
+        "sexo1": SEXO1_OPTIONS[0],
+        "trans1": TRANS1_OPTIONS[0],
+        "edad": 0,
+        "provincia": "",
+        "localidad": "",
+        "nivel_educativo1": EDUCACION1_OPTIONS[0],
+        "complitud1": COMPLITUD1_OPTIONS[0],
+        "ocupada1": OCUPADA1_OPTIONS[0],
+        "actividad1": ACTIVIDAD1_OPTIONS[0],
+        "vinculo": VINCULO_OPTIONS[0],
+        "convivencia": CONVIVENCIA_OPTIONS[0],
+        "viol_fisica": TIPO_OPTIONS[0],
+        "viol_psico": TIPO_OPTIONS[0],
+        "viol_econ": TIPO_OPTIONS[0],
+        "viol_sexual": TIPO_OPTIONS[0],
+        "modalidad": MODALIDAD_OPTIONS[0],
+        "tiempo": TIEMPO_OPTIONS[0],
+        "frecuencia": FRECUENCIA_OPTIONS[0],
+        "sexo2": SEXO2_OPTIONS[0],
+        "trans2": TRANS2_OPTIONS[0],
+        "edad_agresor": 0,
+        "nivel_educativo2": EDUCACION2_OPTIONS[0],
+        "complitud2": COMPLITUD2_OPTIONS[0],
+        "actividad2": ACTIVIDAD2_OPTIONS[0],
+        "otra_actividad2": OTRA2_OPTIONS[0],
+        "info_especifica": "",
+    }
+
+    for key, value in default_values.items():
+        st.session_state.setdefault(key, value)
+
+
 def ensure_unit_file_exists(unidad: str) -> str:
     if unidad not in UNIT_FILE_MAP:
         raise ValueError(f"Unidad no reconocida: {unidad}")
@@ -336,6 +375,8 @@ def reset_form():
 # ==========================
 if "step" not in st.session_state:
     st.session_state.step = 1
+
+initialize_default_state()
 
 # ==========================
 # UI - TÍTULO Y PROGRESO
