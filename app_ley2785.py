@@ -345,22 +345,14 @@ def find_missing_in_state(keys):
 
 def sanitize_required_text_fields():
     """Elimina espacios sobrantes y evita valores None en textos obligatorios."""
-
-    # Incluimos partido_municipio para garantizar que se guarde la columna L.
-    text_keys = ("identificacion", "provincia", "partido_municipio", "localidad")
-
     sanitized = {}
-    for key in text_keys:
+    for key in ("identificacion", "provincia", "localidad"):
         val = st.session_state.get(key, "")
         if isinstance(val, str):
             val = val.strip()
         elif val is None:
             val = ""
-
         sanitized[key] = val
-        # Actualizamos el session_state para que el guardado tome el valor saneado
-        st.session_state[key] = val
-
     return sanitized
 
 
