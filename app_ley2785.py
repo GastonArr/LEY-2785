@@ -249,7 +249,6 @@ def initialize_default_state():
         "edad": 0,
         "provincia": "",
         "localidad": "",
-        "partido_municipio": "",
         "nivel_educativo1": EDUCACION1_OPTIONS[0],
         "complitud1": COMPLITUD1_OPTIONS[0],
         "ocupada1": OCUPADA1_OPTIONS[0],
@@ -320,7 +319,10 @@ def build_form_data_from_state():
     sanitized_text = sanitize_required_text_fields()
     data = {}
     for key in COLUMN_MAPPING.keys():
-        value = sanitized_text.get(key, st.session_state.get(key))
+        if key == "partido_municipio":
+            value = sanitized_text.get("localidad", st.session_state.get("localidad"))
+        else:
+            value = sanitized_text.get(key, st.session_state.get(key))
 
         if key == "fecha_consulta" and isinstance(value, dt.date):
             value = value.strftime("%d/%m/%Y")
@@ -455,7 +457,7 @@ elif st.session_state.step == 2:
     with cols1[1]:
         st.selectbox("Identidad trans (columna I)", TRANS1_OPTIONS, key="trans1")
 
-    cols2 = st.columns(3)
+    cols2 = st.columns(2)
     with cols2[0]:
         st.number_input(
             "Edad (columna J)",
@@ -470,13 +472,6 @@ elif st.session_state.step == 2:
             key="provincia",
             value=st.session_state.get("provincia", ""),
         )
-    with cols2[2]:
-        st.text_input(
-            "Partido / Municipio (columna L) [NO obligatorio]",
-            key="partido_municipio",
-            value=st.session_state.get("partido_municipio", ""),
-        )
-
     cols3 = st.columns(3)
     with cols3[0]:
         st.text_input(
