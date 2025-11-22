@@ -627,13 +627,14 @@ elif st.session_state.step == 4:
     st.markdown("---")
     if st.button("💾 Guardar registro"):
         try:
-            # Validación global de TODOS los campos obligatorios
-            missing_keys = find_missing_in_state(REQUIRED_FIELDS)
+            # Validamos únicamente los campos del paso 4
+            required_step_keys = STEP_REQUIRED.get(4, [])
+            missing_keys = find_missing_in_state(required_step_keys)
 
             if missing_keys:
                 labels = [FIELD_LABELS[k] for k in missing_keys]
                 st.error(
-                    "Faltan completar los siguientes campos obligatorios:\n\n- "
+                    "Faltan completar los siguientes campos del paso 4:\n\n- "
                     + "\n- ".join(labels)
                 )
             else:
