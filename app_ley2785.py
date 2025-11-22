@@ -313,9 +313,10 @@ def get_next_row_and_counter(ws):
 
 def build_form_data_from_state():
     """Toma los valores del session_state y arma el dict que se escribirá en Excel."""
+    sanitized_text = sanitize_required_text_fields()
     data = {}
     for key in COLUMN_MAPPING.keys():
-        value = st.session_state.get(key)
+        value = sanitized_text.get(key, st.session_state.get(key))
 
         if key == "fecha_consulta" and isinstance(value, dt.date):
             value = value.strftime("%d/%m/%Y")
@@ -326,11 +327,11 @@ def build_form_data_from_state():
 
 def find_missing_in_state(keys):
     """Devuelve lista de claves que faltan (None o string vacío) leyendo directamente de session_state."""
-    sanitize_required_text_fields()
+    sanitized_text = sanitize_required_text_fields()
 
     missing = []
     for key in keys:
-        val = st.session_state.get(key, None)
+        val = sanitized_text.get(key, st.session_state.get(key, None))
         if val is None:
             missing.append(key)
         elif isinstance(val, str) and val.strip() == "":
@@ -340,11 +341,15 @@ def find_missing_in_state(keys):
 
 def sanitize_required_text_fields():
     """Elimina espacios sobrantes y evita valores None en textos obligatorios."""
+    sanitized = {}
     for key in ("identificacion", "provincia", "localidad"):
         val = st.session_state.get(key, "")
         if isinstance(val, str):
             val = val.strip()
-        st.session_state[key] = val
+        elif val is None:
+            val = ""
+        sanitized[key] = val
+    return sanitized
 
 
 def save_to_excel(unidad, form_data):
