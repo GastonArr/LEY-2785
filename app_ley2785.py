@@ -243,11 +243,13 @@ def initialize_default_state():
         "institucion": UNIDADES_JURISDICCION[0],
         "fecha_consulta": dt.date.today(),
         "tipo_documento": DOCUMENTO_OPTIONS[0],
+        "otro_doc": "",
         "sexo1": SEXO1_OPTIONS[0],
         "trans1": TRANS1_OPTIONS[0],
         "edad": 0,
         "provincia": "",
         "localidad": "",
+        "partido_municipio": "",
         "nivel_educativo1": EDUCACION1_OPTIONS[0],
         "complitud1": COMPLITUD1_OPTIONS[0],
         "ocupada1": OCUPADA1_OPTIONS[0],
@@ -269,6 +271,8 @@ def initialize_default_state():
         "actividad2": ACTIVIDAD2_OPTIONS[0],
         "otra_actividad2": OTRA2_OPTIONS[0],
         "info_especifica": "",
+        "otro_vinculo": "",
+        "fecha_modificacion": "",
     }
 
     for key, value in default_values.items():
@@ -434,8 +438,16 @@ elif st.session_state.step == 2:
         DOCUMENTO_OPTIONS,
         key="tipo_documento",
     )
-    st.text_input("Otro documento (columna D) [NO obligatorio]", key="otro_doc")
-    st.text_input("Identificación / N° doc (columna E)", key="identificacion")
+    st.text_input(
+        "Otro documento (columna D) [NO obligatorio]",
+        key="otro_doc",
+        value=st.session_state.get("otro_doc", ""),
+    )
+    st.text_input(
+        "Identificación / N° doc (columna E)",
+        key="identificacion",
+        value=st.session_state.get("identificacion", ""),
+    )
 
     cols1 = st.columns(2)
     with cols1[0]:
@@ -453,16 +465,25 @@ elif st.session_state.step == 2:
             key="edad",
         )
     with cols2[1]:
-        st.text_input("Provincia (columna K)", key="provincia")
+        st.text_input(
+            "Provincia (columna K)",
+            key="provincia",
+            value=st.session_state.get("provincia", ""),
+        )
     with cols2[2]:
         st.text_input(
             "Partido / Municipio (columna L) [NO obligatorio]",
             key="partido_municipio",
+            value=st.session_state.get("partido_municipio", ""),
         )
 
     cols3 = st.columns(3)
     with cols3[0]:
-        st.text_input("Localidad (columna M)", key="localidad")
+        st.text_input(
+            "Localidad (columna M)",
+            key="localidad",
+            value=st.session_state.get("localidad", ""),
+        )
     with cols3[1]:
         st.selectbox(
             "Nivel educativo (columna N)",
