@@ -218,8 +218,20 @@ STEP_REQUIRED = {
         "tiempo",
         "frecuencia",
     ],
-    # paso 4 se valida completo al guardar
+    4: [
+        "sexo2",
+        "trans2",
+        "edad_agresor",
+        "nivel_educativo2",
+        "complitud2",
+        "actividad2",
+        "otra_actividad2",
+        "info_especifica",
+    ],
 }
+
+# Lista de todos los campos obligatorios (se usa al guardar)
+REQUIRED_FIELDS = sorted({key for keys in STEP_REQUIRED.values() for key in keys})
 
 # ==========================
 # FUNCIONES AUXILIARES
@@ -559,8 +571,7 @@ elif st.session_state.step == 4:
     if st.button("💾 Guardar registro"):
         try:
             # Validación global de TODOS los campos obligatorios
-            required_all = list(FIELD_LABELS.keys())
-            missing_keys = find_missing_in_state(required_all)
+            missing_keys = find_missing_in_state(REQUIRED_FIELDS)
 
             if missing_keys:
                 labels = [FIELD_LABELS[k] for k in missing_keys]
