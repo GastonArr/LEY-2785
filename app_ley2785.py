@@ -317,7 +317,6 @@ def get_next_row_and_counter(ws):
 def build_form_data_from_state():
     """Toma los valores del session_state y arma el dict que se escribirá en Excel."""
     sanitized_text = sanitize_required_text_fields()
-    st.session_state.update(sanitized_text)
     data = {}
     for key in COLUMN_MAPPING.keys():
         if key == "partido_municipio":
@@ -329,9 +328,8 @@ def build_form_data_from_state():
             value = value.strftime("%d/%m/%Y")
 
         # Aseguramos que los campos de texto no se pierdan por valores None
-        if key in ("otro_doc", "provincia", "localidad"):
+        if key in ("identificacion", "otro_doc", "provincia", "localidad"):
             value = "" if value is None else str(value).strip()
-            st.session_state[key] = value
 
         data[key] = value
     return data
@@ -361,7 +359,6 @@ def sanitize_required_text_fields():
         elif val is None:
             val = ""
         sanitized[key] = val
-        st.session_state[key] = val
     return sanitized
 
 
