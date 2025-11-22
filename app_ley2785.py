@@ -317,6 +317,7 @@ def get_next_row_and_counter(ws):
 def build_form_data_from_state():
     """Toma los valores del session_state y arma el dict que se escribirá en Excel."""
     sanitized_text = sanitize_required_text_fields()
+    st.session_state.update(sanitized_text)
     data = {}
     for key in COLUMN_MAPPING.keys():
         if key == "partido_municipio":
