@@ -327,6 +327,11 @@ def build_form_data_from_state():
         if key == "fecha_consulta" and isinstance(value, dt.date):
             value = value.strftime("%d/%m/%Y")
 
+        # Aseguramos que los campos de texto no se pierdan por valores None
+        if key in ("otro_doc", "provincia", "localidad"):
+            value = "" if value is None else str(value).strip()
+            st.session_state[key] = value
+
         data[key] = value
     return data
 
@@ -348,13 +353,14 @@ def find_missing_in_state(keys):
 def sanitize_required_text_fields():
     """Elimina espacios sobrantes y evita valores None en textos obligatorios."""
     sanitized = {}
-    for key in ("identificacion", "provincia", "localidad"):
+    for key in ("identificacion", "provincia", "localidad", "otro_doc"):
         val = st.session_state.get(key, "")
         if isinstance(val, str):
             val = val.strip()
         elif val is None:
             val = ""
         sanitized[key] = val
+        st.session_state[key] = val
     return sanitized
 
 
@@ -654,17 +660,27 @@ elif st.session_state.step == 4:
                     + "\n- ".join(labels)
                 )
             else:
-                form_data = build_form_data_from_state()
-                unidad = form_data.get("institucion")
-                counter, filename = save_to_excel(unidad, form_data)
-                st.success(
-                    f"Registro guardado correctamente.\n\n"
-                    f"Nº (columna A): **{counter}**\n"
-                    f"Archivo: **{filename}**"
-                )
-                # limpiar formulario para que NO recuerde datos después de finalizar
-                reset_form()
-                st.rerun()
+                # Válida que los datos obligatorios de pasos anteriores sigan presentes
+                missing_required = find_missing_in_state(REQUIRED_FIELDS)
+
+                if missing_required:
+                    labels = [FIELD_LABELS.get(k, k) for k in missing_required]
+                    st.error(
+                        "No se puede guardar porque faltan campos obligatorios:\n\n- "
+                        + "\n- ".join(labels)
+                    )
+                else:
+                    form_data = build_form_data_from_state()
+                    unidad = form_data.get("institucion")
+                    counter, filename = save_to_excel(unidad, form_data)
+                    st.success(
+                        f"Registro guardado correctamente.\n\n"
+                        f"Nº (columna A): **{counter}**\n"
+                        f"Archivo: **{filename}**"
+                    )
+                    # limpiar formulario para que NO recuerde datos después de finalizar
+                    reset_form()
+                    st.rerun()
         except Exception as e:
             st.error(f"Error al guardar: {e}")
 
